@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="{{katexUri}}/katex.min.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+    /* VS Code Theme & Color Mode Integration */
+    :root {
+      --vscode-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --sans: 'Inter', var(--vscode-font-family);
+      --mono: 'Fira Code', var(--vscode-editor-font-family, monospace);
+
+    /* Dynamic tokens mapped to VS Code Theme with Logo-aligned Palette */
+    --bg: var(--vscode-editor-background, #11141a);
+    --fg: var(--vscode-editor-foreground, #e2e8f0);
+    --fg-muted: var(--vscode-descriptionForeground, rgba(255, 255, 255, 0.6));
+    --border: var(--vscode-panel-border, var(--vscode-widget-border, rgba(255, 255, 255, 0.1)));
+    --border-subtle: rgba(125, 125, 125, 0.12);
+
+    /* Brand Logo Colors (Python Blue & Amber-Yellow) */
+    --py-blue: #38bdf8;
+    --py-blue-dark: #0284c7;
+    --py-blue-glow: rgba(56, 189, 248, 0.25);
+    --py-yellow: #f59e0b;
+    --py-yellow-light: #fbbf24;
+    --py-yellow-glow: rgba(245, 158, 11, 0.25);
+
+    /* Frame & Heap Surfaces */
+    --frame-bg: var(--vscode-sideBar-background, rgba(18, 24, 38, 0.88));
+    --frame-header-bg: rgba(56, 189, 248, 0.1);
+    --heap-bg: rgba(30, 26, 18, 0.85);
+    --heap-header-bg: rgba(245, 158, 11, 0.12);
+    --card-surface: rgba(125, 125, 125, 0.04);
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    --hover-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+
+    /* Unified Brand Accents */
+    --accent: #38bdf8;
+    --accent-glow: var(--py-blue-glow);
+    --teal: #38bdf8;
+    --teal-glow: var(--py-blue-glow);
+    --purple: #f59e0b;
+    --pink: #f59e0b;
+    --amber: #f59e0b;
+    --success: var(--vscode-terminal-ansiGreen, #10b981);
+    --danger: var(--vscode-errorForeground, #ef4444);
+
+    --glass-blur: blur(12px);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --transition-smooth: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Specific Light Mode Adjustments */
+  body.vscode-light {
+    --bg: var(--vscode-editor-background, #f8fafc);
+    --fg: var(--vscode-editor-foreground, #0f172a);
+    --fg-muted: var(--vscode-descriptionForeground, #475569);
+    --border: var(--vscode-panel-border, rgba(0, 0, 0, 0.1));
+    --border-subtle: rgba(0, 0, 0, 0.06);
+    --frame-bg: var(--vscode-sideBar-background, rgba(240, 249, 255, 0.88));
+    --frame-header-bg: rgba(2, 132, 199, 0.08);
+    --heap-bg: rgba(254, 252, 232, 0.88);
+    --heap-header-bg: rgba(217, 119, 6, 0.08);
+    --card-surface: rgba(0, 0, 0, 0.02);
+    --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    --hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    --accent: #0284c7;
+    --accent-glow: rgba(2, 132, 199, 0.15);
+  }
+
+    /* Specific High Contrast Mode Adjustments */
+    body.vscode-high-contrast {
+      --border: var(--vscode-contrastBorder, #fff);
+      --frame-bg: #000;
+      --heap-bg: #000;
+      --card-shadow: none;
+      --glass-blur: none;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      width: 100%;
+      min-width: 0;
+      overflow: auto;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* App Navigation Bar */
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-width: max-content;
+      gap: 16px;
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 2px 8px var(--accent-glow);
+    }
+
+    /* View Switcher Tabs */
+    .view-tabs {
+      display: flex;
+      flex: 0 0 auto;
+      background: var(--card-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 3px;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--fg-muted);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 600;
+      font-family: var(--sans);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition-smooth);
+    }
+
+    .tab-btn:hover {
+      color: var(--fg);
+      background: rgba(125, 125, 125, 0.08);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(245, 158, 11, 0.2));
+      color: var(--fg);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    #empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      text-align: center;
+      background: var(--card-surface);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-lg);
+      color: var(--fg-muted);
+      font-style: normal;
+    }
+
+    #empty svg {
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    /* Columns & Diagram Container */
+    .columns {
+      display: flex;
+      min-width: max-content;
+      gap: 20px;
+      align-items: flex-start;
+      position: relative;
+      width: 100%;
+    }
+
+    .col-container {
+      flex: 1;
+      min-width: 270px;
+    }
+
+    #edge-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 5;
+    }
+
+    #edge-overlay path {
+      fill: none;
+      stroke: url(#edgeGradient);
+      stroke-width: 2;
+      opacity: 0.85;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      transition: var(--transition-smooth);
+    }
+
+    #edge-overlay path.edge-highlight {
+      opacity: 1;
+      stroke: var(--py-yellow);
+      stroke-width: 2.8;
+      filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));
+    }
+
+    .col-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      margin: 0 0 10px 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .col-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    /* Card base: Glassmorphism */
+    .frame,
+    .heap,
+    .complexity,
+    .viz-diagram-card {
+      background: var(--frame-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-bottom: 14px;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      overflow: hidden;
+    }
+
+    .frame:hover,
+    .heap:hover {
+      border-color: rgba(125, 125, 125, 0.25);
+      box-shadow: var(--hover-shadow);
+    }
+
+    /* Stack Frames */
+    .frame-header {
+      padding: 8px 12px;
+      background: var(--frame-header-bg);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono);
+      font-weight: 600;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      overflow-x: auto;
+    }
+
+    .frame-header .fn-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--fg);
+    }
+
+    .frame-header .fn-tag {
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+
+    .frame-header .line {
+      color: var(--accent);
+      font-weight: 500;
+      font-size: 11px;
+      cursor: pointer;
+      background: rgba(99, 102, 241, 0.08);
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid rgba(99, 102, 241, 0.18);
+      transition: var(--transition-smooth);
+    }
+
+    .frame-header .line:hover {
+      background: rgba(99, 102, 241, 0.2);
+      text-decoration: none;
+    }
+
+    /* Variable Rows */
+    .var-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 12px;
+      font-family: var(--mono);
+      font-size: 12px;
+      border-top: 1px solid var(--border-subtle);
+      transition: background 0.15s ease;
+    }
+
+    .var-row:first-child {
+      border-top: none;
+    }
+
+    .var-row.ref {
+      cursor: pointer;
+    }
+
+    .var-row.ref:hover {
+      background: rgba(168, 85, 247, 0.08);
+    }
+
+    .var-name {
+      color: var(--vscode-symbolIcon-variableForeground, var(--accent));
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .var-type {
+      opacity: 0.7;
+      font-size: 10px;
+      color: var(--purple);
+      background: var(--card-surface);
+      padding: 1px 5px;
+      border-radius: 3px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .var-value {
+      color: var(--fg);
+      opacity: 0.95;
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+      max-width: 170px;
+      scrollbar-width: thin;
+      background: var(--card-surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .var-row:not(.ref) .var-value {
+      cursor: text;
+    }
+
+    .var-row:not(.ref) .var-value:hover {
+      border-color: var(--accent);
+      background: rgba(99, 102, 241, 0.08);
+    }
+
+    .var-edit-input {
+      width: 110px;
+      background: var(--vscode-input-background, rgba(0, 0, 0, 0.2));
+      color: var(--vscode-input-foreground, var(--fg));
+      border: 1px solid var(--accent);
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      outline: none;
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    /* Console Input */
+    .console-row {
+      display: flex;
+      gap: 6px;
+      padding: 7px 12px;
+      border-top: 1px solid var(--border);
+      background: var(--card-surface);
+    }
+
+    .console-prefix {
+      font-family: var(--mono);
+      color: var(--teal);
+      font-weight: 700;
+      align-self: center;
+      font-size: 12px;
+    }
+
+    .console-input {
+      flex: 1;
+      background: var(--vscode-input-background, rgba(0, 0, 0, 0.15));
+      color: var(--vscode-input-foreground, var(--fg));
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 7px;
+      transition: var(--transition-smooth);
+    }
+
+    .console-input:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 8px var(--teal-glow);
+    }
+
+    .console-output {
+      padding: 4px 12px 7px;
+      font-family: var(--mono);
+      font-size: 11px;
+      word-break: break-all;
+      border-top: 1px dashed var(--border-subtle);
+    }
+
+    .console-output.ok {
+      color: var(--success);
+    }
+
+    .console-output.error {
+      color: var(--danger);
+    }
+
+    /* Heap Objects */
+    .heap {
+      background: var(--heap-bg);
+      border: 1px solid rgba(168, 85, 247, 0.2);
+    }
+
+    .heap.highlight {
+      outline: 2px solid var(--pink);
+      border-color: var(--pink);
+      box-shadow: 0 0 16px rgba(236, 72, 153, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .heap-header {
+      padding: 7px 12px;
+      background: var(--heap-header-bg);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .heap-header .type-tag {
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .heap-header .id-pill {
+      font-size: 10px;
+      background: var(--card-surface);
+      color: var(--fg-muted);
+      padding: 1px 6px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .heap-item {
+      padding: 4px 12px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--fg);
+      opacity: 0.9;
+      border-top: 1px solid var(--border-subtle);
+      white-space: nowrap;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .heap-item:first-child {
+      border-top: none;
+    }
+
+    .heap-more {
+      padding: 3px 12px 6px;
+      font-size: 10px;
+      color: var(--fg-muted);
+      font-family: var(--mono);
+      font-style: italic;
+    }
+
+    /* Complexity Panel */
+    .complexity {
+      background: var(--frame-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      max-width: 640px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .complexity-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .complexity-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .complexity-card {
+      background: var(--card-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .complexity-label {
+      font-size: 11px;
+      color: var(--fg-muted);
+      font-weight: 500;
+    }
+
+    .complexity-badge {
+      color: var(--teal);
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .complexity-latex {
+      margin-top: 6px;
+      background: var(--card-surface);
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .math-formula {
+      font-family: 'Cambria Math', 'KaTeX_Math', 'Times New Roman', serif;
+      font-size: 14px;
+      font-style: italic;
+      color: var(--amber);
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .math-calligraphic {
+      font-family: 'Cambria Math', 'Times New Roman', serif;
+      font-weight: 700;
+      font-style: normal;
+      font-size: 15px;
+    }
+
+    .math-desc {
+      font-family: var(--sans);
+      font-size: 10px;
+      font-style: normal;
+      color: var(--fg-muted);
+      background: var(--card-surface);
+      padding: 1px 6px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .complexity-samples {
+      font-size: 11px;
+      color: var(--fg-muted);
+      font-family: var(--mono);
+    }
+
+    .latex-equations {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .latex-equation {
+      overflow-x: auto;
+      padding: 8px 10px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: var(--card-surface);
+    }
+
+    .latex-frame-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 8px;
+      color: var(--fg-muted);
+      font-size: 12px;
+    }
+
+    .latex-frame-list {
+      color: var(--fg);
+      font-family: var(--mono);
+      overflow-wrap: anywhere;
+    }
+
+    .latex-source {
+      margin-top: 12px;
+      color: var(--fg-muted);
+      font-size: 11px;
+    }
+
+    .latex-source pre {
+      overflow-x: auto;
+      padding: 10px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: var(--card-surface);
+      color: var(--fg);
+      font-family: var(--mono);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    /* Diagram Views */
+    .diagram-view-panel {
+      display: none;
+      width: max-content;
+      min-width: 100%;
+      margin-top: 6px;
+    }
+
+    .diagram-view-panel.active {
+      display: block;
+    }
+
+    .flowchart-svg-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow: auto;
+      overscroll-behavior: contain;
+      padding: 16px;
+      background: var(--card-surface);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .flowchart-node {
+      cursor: pointer;
+    }
+
+    .flowchart-node rect {
+      stroke-width: 1.5;
+      rx: 8;
+    }
+
+    .flowchart-label {
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .flowchart-text {
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .flowchart-edge {
+      stroke: var(--accent);
+      stroke-width: 2;
+      fill: none;
+      marker-end: url(#arrow);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header Bar -->
+  <div class="app-header">
+    <div class="brand">
+      <img src="{{mediaUri}}/icon.png" alt="Codilizer Python Logo" style="width:22px;height:22px;border-radius:4px;object-fit:contain;vertical-align:middle;" onerror="this.style.display='none'" />
+      <span>Codilizer Python</span>
+    </div>
+
+    <!-- Mode Selector Tabs -->
+    <div class="view-tabs">
+      <button class="tab-btn active" id="tab-interactive" onclick="switchView('interactive')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <path d="M9 3v18" />
+          <path d="M14 9h4" />
+          <path d="M14 15h4" />
+        </svg>
+        Stack &amp; Heap
+      </button>
+      <button class="tab-btn" id="tab-flowchart" onclick="switchView('flowchart')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="5" r="3" />
+          <circle cx="6" cy="19" r="3" />
+          <circle cx="18" cy="19" r="3" />
+          <line x1="12" y1="8" x2="6" y2="16" />
+          <line x1="12" y1="8" x2="18" y2="16" />
+        </svg>
+        Flowchart
+      </button>
+      <button class="tab-btn" id="tab-mermaid" onclick="switchView('mermaid')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="16 18 22 12 16 6" />
+          <polyline points="8 6 2 12 8 18" />
+        </svg>
+        Mermaid
+      </button>
+      <button class="tab-btn" id="tab-latex" onclick="switchView('latex')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+          <path d="M6 6h10" />
+          <path d="M6 10h10" />
+        </svg>
+        LaTeX Math
+      </button>
+    </div>
+  </div>
+
+  <div id="empty">
+    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+    <div>Waiting for a debug session to hit a breakpoint&hellip;</div>
+    <div style="font-size:11px;margin-top:6px;opacity:0.6;">Start debugging in Python to visualize frames, heap objects,
+      and complexity live.</div>
+  </div>
+
+  <!-- Complexity Display Card -->
+  <div id="complexity"></div>
+
+  <!-- Hidden SVG Defs for Gradients & Markers -->
+  <svg style="position:absolute;width:0;height:0;pointer-events:none;">
+    <defs>
+      <linearGradient id="edgeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="var(--py-blue)" />
+        <stop offset="100%" stop-color="var(--py-yellow)" />
+      </linearGradient>
+      <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6"
+        orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--py-blue)" />
+      </marker>
+    </defs>
+  </svg>
+
+  <!-- Interactive Stack & Heap View -->
+  <div class="columns" id="root" style="display:none;">
+    <svg id="edge-overlay"></svg>
+    <div class="col-container">
+      <div class="col-title">CALL STACK</div>
+      <div id="frames"></div>
+    </div>
+    <div class="col-container">
+      <div class="col-title">HEAP MEMORY</div>
+      <div id="heap"></div>
+    </div>
+  </div>
+
+  <!-- Flowchart View Tab -->
+  <div id="view-flowchart" class="diagram-view-panel">
+    <div class="viz-diagram-card" style="padding:16px;">
+      <div class="col-title">EXECUTION FLOWCHART</div>
+      <div class="flowchart-svg-wrap" id="flowchart-container"></div>
+    </div>
+  </div>
+
+  <!-- Mermaid Diagram View Tab -->
+  <div id="view-mermaid" class="diagram-view-panel">
+    <div class="viz-diagram-card" style="padding:16px;">
+      <div class="col-title">LIVE MEMORY GRAPH</div>
+      <div style="font-size:11px;margin-bottom:8px;color:var(--fg-muted);">Live graph generated from current frame state
+        and memory pointers.</div>
+      <div class="flowchart-svg-wrap" id="mermaid-diagram" role="img" aria-label="Live call stack and heap graph"></div>
+      <details style="margin-top:12px;">
+        <summary style="cursor:pointer;color:var(--fg-muted);font-size:11px;">Mermaid source</summary>
+        <pre id="mermaid-code"
+          style="background:var(--card-surface);padding:14px;border-radius:var(--radius-sm);border:1px solid var(--border);color:var(--fg);font-family:var(--mono);font-size:12px;overflow-x:auto;"></pre>
+      </details>
+    </div>
+  </div>
+
+  <!-- LaTeX Math View Tab -->
+  <div id="view-latex" class="diagram-view-panel">
+    <div class="viz-diagram-card" style="padding:16px;">
+      <div class="col-title">LATEX ASYMPTOTIC COMPLEXITY &amp; FORMULAS</div>
+      <div id="latex-content" style="padding:10px 0;"></div>
+    </div>
+  </div>
+
+  <script src="{{mermaidUri}}/mermaid.min.js"></script>
+  <script src="{{katexUri}}/katex.min.js"></script>
+  <script>
+    const vscode = acquireVsCodeApi();
+    const empty = document.getElementById('empty');
+    const root = document.getElementById('root');
+    const framesEl = document.getElementById('frames');
+    const heapEl = document.getElementById('heap');
+
+    let currentView = 'interactive';
+    let prevSnapshot = null;
+    let lastComplexity = null;
+    let pendingConsoleOutput = null;
+
+    function switchView(mode) {
+      currentView = mode;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.diagram-view-panel').forEach(p => p.classList.remove('active'));
+
+      const targetTab = document.getElementById('tab-' + mode);
+      if (targetTab) targetTab.classList.add('active');
+
+      if (mode === 'interactive') {
+        if (prevSnapshot) {
+          root.style.display = 'flex';
+          requestAnimationFrame(() => drawEdges(prevSnapshot));
+        }
+      } else {
+        root.style.display = 'none';
+        const panel = document.getElementById('view-' + mode);
+        if (panel) panel.classList.add('active');
+      }
+
+      if (prevSnapshot) {
+        if (mode === 'flowchart') renderFlowchart(prevSnapshot);
+        if (mode === 'mermaid') renderMermaid(prevSnapshot);
+        if (mode === 'latex') renderLatex(prevSnapshot, lastComplexity);
+      }
+    }
+
+    window.addEventListener('message', (event) => {
+      const msg = event.data;
+      if (msg.type === 'snapshot') {
+        render(msg.payload, prevSnapshot);
+        prevSnapshot = msg.payload;
+        if (currentView === 'flowchart') renderFlowchart(prevSnapshot);
+        if (currentView === 'mermaid') renderMermaid(prevSnapshot);
+        if (currentView === 'latex') renderLatex(prevSnapshot, lastComplexity);
+      } else if (msg.type === 'complexity') {
+        lastComplexity = msg.payload;
+        renderComplexity(msg.payload);
+        if (currentView === 'latex') renderLatex(prevSnapshot, lastComplexity);
+      } else if (msg.type === 'evaluateResult') {
+        if (pendingConsoleOutput) {
+          pendingConsoleOutput.style.display = 'block';
+          pendingConsoleOutput.className = 'console-output ' + (msg.payload.ok ? 'ok' : 'error');
+          pendingConsoleOutput.textContent = msg.payload.ok
+            ? '=> ' + (msg.payload.output || '(no return value)')
+            : 'Error: ' + msg.payload.output;
+        }
+      }
+    });
+
+    function complexityToLatex(comp) {
+      if (!comp) return '\\mathcal{O}(1)';
+      let c = comp.replace(/O\((.*?)\)/, '$1');
+      c = c.replace(/sqrt\s*n/g, '\\sqrt{n}');
+      c = c.replace(/log\s*n/g, '\\log n');
+      c = c.replace(/n\^2/g, 'n^2');
+      c = c.replace(/n\^3/g, 'n^3');
+      c = c.replace(/2\^n/g, '2^n');
+      c = c.replace(/n!/g, 'n!');
+      return `\\mathcal{O}(${c})`;
+    }
+
+    function formatMathComplexity(comp) {
+      if (!comp) return '<span class="math-formula"><span class="math-calligraphic">&Oscr;</span>(1)</span>';
+      
+      const descMap = {
+        'O(1)': 'Constant',
+        'O(log n)': 'Logarithmic',
+        'O(sqrt n)': 'Sub-linear',
+        'O(n)': 'Linear',
+        'O(n log n)': 'Linearithmic',
+        'O(n^2)': 'Quadratic',
+        'O(n^3)': 'Cubic',
+        'O(2^n)': 'Exponential',
+        'O(n!)': 'Factorial'
+      };
+
+      let inner = comp.replace(/O\((.*?)\)/, '$1');
+      inner = inner.replace(/sqrt\s*n/g, '&radic;<i>n</i>');
+      inner = inner.replace(/log\s*n/g, 'log <i>n</i>');
+      inner = inner.replace(/n\^2/g, '<i>n</i><sup>2</sup>');
+      inner = inner.replace(/n\^3/g, '<i>n</i><sup>3</sup>');
+      inner = inner.replace(/2\^n/g, '2<sup><i>n</i></sup>');
+      inner = inner.replace(/n!/g, '<i>n</i>!');
+      inner = inner.replace(/\bn\b/g, '<i>n</i>');
+
+      const desc = descMap[comp] || 'Polynomial';
+      return `<span class="math-formula"><span class="math-calligraphic">&Oscr;</span>(${inner})</span><span class="math-desc">${desc}</span>`;
+    }
+
+    function renderComplexity(result) {
+      const container = document.getElementById('complexity');
+      const el = document.createElement('div');
+      el.className = 'complexity';
+
+      const timeFormatted = formatMathComplexity(result.timeComplexity);
+      const spaceFormatted = formatMathComplexity(result.spaceComplexity);
+
+      el.innerHTML =
+        '<div class="complexity-title">' +
+        '<span>COMPLEXITY ANALYSIS &mdash; ' + escapeHtml(result.functionName) + '</span>' +
+        '<span style="font-size:10px;opacity:0.6;font-family:var(--mono);">Dynamic Profiler</span>' +
+        '</div>' +
+        '<div class="complexity-grid">' +
+        '<div class="complexity-card">' +
+        '<span class="complexity-label">Time Complexity</span>' +
+        '<div class="complexity-badge">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>' +
+        escapeHtml(result.timeComplexity) +
+        '</div>' +
+        '<div class="complexity-latex">' + timeFormatted + '</div>' +
+        '</div>' +
+        '<div class="complexity-card">' +
+        '<span class="complexity-label">Space Complexity</span>' +
+        '<div class="complexity-badge">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>' +
+        escapeHtml(result.spaceComplexity) +
+        '</div>' +
+        '<div class="complexity-latex">' + spaceFormatted + '</div>' +
+        '</div>' +
+        '</div>' +
+        '<div class="complexity-samples">Sample sweep sizes: n = [' + result.sampledInputSizes.join(', ') + ']</div>';
+
+      container.innerHTML = '';
+      container.appendChild(el);
+      if (prevSnapshot && currentView === 'interactive') {
+        requestAnimationFrame(() => drawEdges(prevSnapshot));
+      }
+    }
+
+    function renderFlowchart(snapshot) {
+      const wrap = document.getElementById('flowchart-container');
+      if (!snapshot || !snapshot.frames || snapshot.frames.length === 0) {
+        wrap.innerHTML = '<div style="opacity:0.5;font-size:12px;">No frames to render flowchart.</div>';
+        return;
+      }
+
+      const nodeX = 80;
+      const nodeWidth = 440;
+      const textX = nodeX + 20;
+      const textWidth = nodeWidth - 40;
+      const fontSize = 12;
+      const lineHeight = 18;
+      const paddingY = 16;
+      const nodeGap = 28;
+      const frameLayouts = snapshot.frames.map(frame => {
+        const titleLines = wrapSvgText(`${frame.functionName} (Line ${frame.line})`, textWidth, fontSize, true);
+        const varsSummary = frame.variables.map(v => `${v.name}=${v.value}`).slice(0, 4).join(', ') || 'no locals';
+        const varsLines = wrapSvgText(varsSummary, textWidth, fontSize);
+        const textLines = titleLines.length + varsLines.length;
+        const height = paddingY * 2 + textLines * lineHeight + 4;
+        return { titleLines, varsLines, height };
+      });
+      const chartHeight = 20 + frameLayouts.reduce((height, frame) => height + frame.height + nodeGap, 0);
+      let svg = `<svg width="${nodeX + nodeWidth + 80}" height="${chartHeight}" viewBox="0 0 ${nodeX + nodeWidth + 80} ${chartHeight}" xmlns="http://www.w3.org/2000/svg">`;
+
+      let y = 20;
+      snapshot.frames.forEach((frame, idx) => {
+        const layout = frameLayouts[idx];
+        const height = layout.height;
+        const isTop = idx === 0;
+        const stroke = isTop ? 'var(--py-yellow)' : 'var(--py-blue)';
+        const fill = isTop ? 'rgba(245,158,11,0.12)' : 'rgba(56,189,248,0.08)';
+
+        svg += `<g class="flowchart-node">`;
+        svg += `<rect x="${nodeX}" y="${y}" width="${nodeWidth}" height="${height}" fill="${fill}" stroke="${stroke}" rx="8"/>`;
+        let textY = y + paddingY + fontSize;
+        svg += `<text x="${textX}" y="${textY}" class="flowchart-label" font-weight="700" fill="var(--fg)">`;
+        for (const line of layout.titleLines) {
+          svg += `<tspan x="${textX}" dy="${line === layout.titleLines[0] ? 0 : lineHeight}">${escapeHtml(line)}</tspan>`;
+          if (line !== layout.titleLines[layout.titleLines.length - 1]) textY += lineHeight;
+        }
+        svg += '</text>';
+        textY += lineHeight;
+        svg += `<text x="${textX}" y="${textY}" class="flowchart-label" fill="var(--fg-muted)">`;
+        for (const [lineIndex, line] of layout.varsLines.entries()) {
+          svg += `<tspan x="${textX}" dy="${lineIndex === 0 ? 0 : lineHeight}">${escapeHtml(line)}</tspan>`;
+        }
+        svg += '</text>';
+        svg += `</g>`;
+
+        if (idx < snapshot.frames.length - 1) {
+          const nextY = y + height + nodeGap;
+          svg += `<line x1="${nodeX + nodeWidth / 2}" y1="${y + height}" x2="${nodeX + nodeWidth / 2}" y2="${nextY}" class="flowchart-edge"/>`;
+        }
+        y += height + nodeGap;
+      });
+
+      svg += '</svg>';
+      wrap.innerHTML = svg;
+    }
+
+    function wrapSvgText(value, maxWidth, fontSize, bold = false) {
+      const maxCharacters = Math.max(1, Math.floor(maxWidth / (fontSize * (bold ? 0.68 : 0.62))));
+      const words = String(value).split(/\s+/);
+      const lines = [];
+      let line = '';
+
+      for (const word of words) {
+        if (word.length > maxCharacters) {
+          if (line) {
+            lines.push(line);
+            line = '';
+          }
+          for (let offset = 0; offset < word.length; offset += maxCharacters) {
+            lines.push(word.slice(offset, offset + maxCharacters));
+          }
+          continue;
+        }
+        const candidate = line ? `${line} ${word}` : word;
+        if (candidate.length > maxCharacters) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = candidate;
+        }
+      }
+
+      if (line) lines.push(line);
+      return lines.length ? lines : [''];
+    }
+
+    let mermaidRenderId = 0;
+
+    async function renderMermaid(snapshot) {
+      const sourceEl = document.getElementById('mermaid-code');
+      const diagramEl = document.getElementById('mermaid-diagram');
+      if (!snapshot) {
+        sourceEl.textContent = '%% No active debug snapshot';
+        diagramEl.textContent = 'No active debug snapshot.';
+        return;
+      }
+
+      let code = 'graph TD\n';
+      code += '  %% Subgraph Call Stack\n';
+      code += '  subgraph Stack ["Call Stack"]\n';
+      snapshot.frames.forEach((f, i) => {
+        code += `    F_${i}["${escapeMermaidLabel(f.functionName)} : line ${f.line}"]\n`;
+        if (i > 0) {
+          code += `    F_${i} -->|calls| F_${i - 1}\n`;
+        }
+      });
+      code += '  end\n\n';
+
+      if (snapshot.heap && snapshot.heap.length > 0) {
+        code += '  %% Subgraph Heap Memory\n';
+        code += '  subgraph Heap ["Heap Objects"]\n';
+        snapshot.heap.forEach(h => {
+          const preview = h.preview.slice(0, 3).map(escapeMermaidLabel).join(', ');
+          const type = escapeMermaidLabel(h.type);
+          code += `    H_${h.id}["#${h.id} (${type})<br/>${preview}"]\n`;
+        });
+        code += '  end\n\n';
+
+        snapshot.edges.forEach(e => {
+          code += `  F_0 -.->|"ref ${escapeMermaidLabel(e.from)}"| H_${e.to}\n`;
+        });
+      }
+
+      sourceEl.textContent = code;
+      const renderId = ++mermaidRenderId;
+      if (!window.mermaid) {
+        diagramEl.textContent = 'Mermaid renderer could not be loaded.';
+        return;
+      }
+
+      try {
+        const { svg, bindFunctions } = await window.mermaid.render('codilizer-mermaid-' + renderId, code);
+        if (renderId !== mermaidRenderId) return;
+        diagramEl.innerHTML = svg;
+        bindFunctions?.(diagramEl);
+      } catch (error) {
+        if (renderId !== mermaidRenderId) return;
+        diagramEl.textContent = 'Could not render Mermaid graph: ' + (error?.message || error);
+      }
+    }
+
+    function escapeMermaidLabel(value) {
+      return String(value)
+        .replace(/&/g, '#amp;')
+        .replace(/"/g, '#quot;')
+        .replace(/</g, '#lt;')
+        .replace(/>/g, '#gt;');
+    }
+
+    function renderLatex(snapshot, comp) {
+      const el = document.getElementById('latex-content');
+      let out = '<div style="display:flex;flex-direction:column;gap:14px;">';
+
+      out += '<section style="padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);">';
+      out += '<h4 style="margin:0 0 10px;color:var(--accent);font-size:13px;">Asymptotic Complexity Formulation</h4>';
+      if (comp) {
+        const timeFormula = `T(n) = ${complexityToLatex(comp.timeComplexity)}`;
+        const spaceFormula = `S(n) = ${complexityToLatex(comp.spaceComplexity)}`;
+        out += '<div class="latex-equations">';
+        out += `<div class="latex-equation">${renderLatexMath(timeFormula, true)}</div>`;
+        out += `<div class="latex-equation">${renderLatexMath(spaceFormula, true)}</div>`;
+        out += '</div>';
+        out += `<details class="latex-source"><summary style="cursor:pointer;">LaTeX source</summary><pre>${escapeHtml(timeFormula + '\n' + spaceFormula)}</pre></details>`;
+      } else {
+        out += '<div style="font-family:var(--sans);color:var(--fg-muted);font-size:12px;">Run "Codilizer Python: Analyze Complexity of Function Under Cursor" to profile and display the mathematical formula.</div>';
+      }
+      out += '</div>';
+
+      out += '<section style="padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);">';
+      out += '<h4 style="margin:0 0 8px;color:var(--accent);font-size:13px;">Call Stack Depth &amp; Frame Equations</h4>';
+      if (snapshot && snapshot.frames) {
+        const frames = snapshot.frames.map(frame => `<code>${escapeHtml(frame.functionName)}</code>`).join(', ');
+        out += '<div class="latex-equations">';
+        out += `<div class="latex-equation">${renderLatexMath('\\text{Active Stack Depth } d = ' + snapshot.frames.length, true)}</div>`;
+        out += `<div class="latex-frame-row"><span>Frames:</span><span class="latex-frame-list">${frames || 'none'}</span></div>`;
+        out += `<div class="latex-equation">${renderLatexMath('\\text{Heap Reference Count } |\\mathcal{H}| = ' + (snapshot.heap ? snapshot.heap.length : 0), true)}</div>`;
+        out += '</div>';
+      }
+      out += '</div>';
+
+      out += '</div>';
+      el.innerHTML = out;
+    }
+
+    function renderLatexMath(tex, displayMode) {
+      if (!window.katex) return `<code>${escapeHtml(tex)}</code>`;
+      return window.katex.renderToString(tex, { displayMode, throwOnError: false });
+    }
+
+    function render(snapshot, prev) {
+      empty.style.display = 'none';
+      if (currentView === 'interactive') {
+        root.style.display = 'flex';
+      }
+      renderFrames(snapshot, prev);
+      renderHeap(snapshot, prev);
+      requestAnimationFrame(() => drawEdges(snapshot));
+    }
+
+    function drawEdges(snapshot) {
+      const overlay = document.getElementById('edge-overlay');
+      if (!overlay || root.style.display === 'none') return;
+      const wrapRect = root.getBoundingClientRect();
+      overlay.setAttribute('width', wrapRect.width);
+      overlay.setAttribute('height', wrapRect.height);
+      overlay.innerHTML = '';
+
+      for (const edge of snapshot.edges) {
+        const heapEl = document.getElementById('heap-' + edge.to);
+        if (!heapEl) continue;
+
+        const rows = document.querySelectorAll('.var-row.ref');
+        for (const row of rows) {
+          if (!row.id.endsWith('-' + edge.from)) continue;
+
+          const fromRect = row.getBoundingClientRect();
+          const toRect = heapEl.getBoundingClientRect();
+
+          const x1 = fromRect.right - wrapRect.left;
+          const y1 = fromRect.top + fromRect.height / 2 - wrapRect.top;
+          const x2 = toRect.left - wrapRect.left;
+          const y2 = toRect.top + toRect.height / 2 - wrapRect.top;
+
+          const midX = (x1 + x2) / 2;
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`);
+          path.dataset.heapId = edge.to;
+          overlay.appendChild(path);
+        }
+      }
+    }
+
+    function frameSignature(frame) {
+      return frame.functionName + '|' + frame.line + '|' +
+        frame.variables.map(v => v.name + ':' + v.value).join(',');
+    }
+
+    function heapSignature(obj) {
+      return obj.type + '|' + obj.preview.join(',') + '|' + obj.truncated;
+    }
+
+    function renderFrames(snapshot, prev) {
+      const prevById = new Map((prev ? prev.frames : []).map(f => [f.id, f]));
+      const nextIds = new Set(snapshot.frames.map(f => f.id));
+
+      for (const child of Array.from(framesEl.children)) {
+        const id = child.dataset.frameId;
+        if (!nextIds.has(id)) child.remove();
+      }
+
+      let anchor = null;
+      for (const frame of snapshot.frames) {
+        const existing = framesEl.querySelector('[data-frame-id="' + cssEscape(frame.id) + '"]');
+        const sig = frameSignature(frame);
+
+        if (existing && existing.dataset.sig === sig) {
+          anchor = existing;
+          continue;
+        }
+
+        const el = buildFrameEl(frame, sig);
+        if (existing) {
+          existing.replaceWith(el);
+        } else if (anchor) {
+          anchor.after(el);
+        } else {
+          framesEl.prepend(el);
+        }
+        anchor = el;
+      }
+    }
+
+    function buildFrameEl(frame, sig) {
+      const el = document.createElement('div');
+      el.className = 'frame';
+      el.dataset.frameId = frame.id;
+      el.dataset.sig = sig;
+
+      const header = document.createElement('div');
+      header.className = 'frame-header';
+      const nameSpan = document.createElement('div');
+      nameSpan.className = 'fn-title';
+      nameSpan.innerHTML = '<span class="fn-tag">def</span> <span>' + escapeHtml(frame.functionName) + '</span>';
+
+      const lineSpan = document.createElement('span');
+      lineSpan.className = 'line';
+      lineSpan.textContent = 'line ' + frame.line;
+      lineSpan.title = 'Jump to source';
+      if (frame.sourcePath) {
+        lineSpan.addEventListener('click', () => {
+          vscode.postMessage({ type: 'revealLine', path: frame.sourcePath, line: frame.line });
+        });
+      }
+      header.appendChild(nameSpan);
+      header.appendChild(lineSpan);
+      el.appendChild(header);
+
+      for (const v of frame.variables) {
+        const row = document.createElement('div');
+        row.className = 'var-row' + (v.isRef ? ' ref' : '');
+
+        const nameEl = document.createElement('span');
+        nameEl.className = 'var-name';
+        nameEl.innerHTML = escapeHtml(v.name) + ' <span class="var-type">' + escapeHtml(v.type) + '</span>';
+        row.appendChild(nameEl);
+
+        const valueEl = document.createElement('span');
+        valueEl.className = 'var-value';
+        valueEl.textContent = v.value;
+        row.appendChild(valueEl);
+
+        if (v.isRef) {
+          row.id = 'var-' + frame.id + '-' + v.name;
+          row.addEventListener('click', () => highlightHeap(v.refId));
+        } else if (v.containerRef !== undefined) {
+          valueEl.addEventListener('click', (evt) => {
+            evt.stopPropagation();
+            startEdit(valueEl, v, frame.id);
+          });
+        }
+        el.appendChild(row);
+      }
+
+      const consoleRow = document.createElement('div');
+      consoleRow.className = 'console-row';
+      const prefix = document.createElement('span');
+      prefix.className = 'console-prefix';
+      prefix.textContent = '>';
+      consoleRow.appendChild(prefix);
+
+      const input = document.createElement('input');
+      input.className = 'console-input';
+      input.placeholder = 'e.g. lst.append(4), del d["key"], x = 99';
+      input.title = 'Runs in this frame — edits the live data structures directly';
+      consoleRow.appendChild(input);
+      el.appendChild(consoleRow);
+
+      const outputRow = document.createElement('div');
+      outputRow.className = 'console-output';
+      outputRow.style.display = 'none';
+      el.appendChild(outputRow);
+
+      input.addEventListener('keydown', (evt) => {
+        if (evt.key !== 'Enter' || !input.value.trim()) return;
+        const expression = input.value.trim();
+        pendingConsoleOutput = outputRow;
+        vscode.postMessage({ type: 'evaluate', frameId: frame.id, expression });
+        input.value = '';
+      });
+
+      return el;
+    }
+
+    function startEdit(valueEl, variable, frameId) {
+      if (valueEl.querySelector('input')) return;
+      const original = variable.value;
+      const input = document.createElement('input');
+      input.className = 'var-edit-input';
+      input.value = original;
+      valueEl.textContent = '';
+      valueEl.appendChild(input);
+      input.focus();
+      input.select();
+
+      let committed = false;
+      const commit = () => {
+        if (committed) return;
+        committed = true;
+        const newValue = input.value;
+        valueEl.textContent = newValue;
+        if (newValue !== original) {
+          vscode.postMessage({
+            type: 'setVariable',
+            frameId: frameId,
+            containerRef: variable.containerRef,
+            name: variable.name,
+            value: newValue
+          });
+        }
+      };
+
+      input.addEventListener('keydown', (evt) => {
+        if (evt.key === 'Enter') { input.blur(); }
+        if (evt.key === 'Escape') { committed = true; valueEl.textContent = original; }
+      });
+      input.addEventListener('blur', commit);
+    }
+
+    function renderHeap(snapshot, prev) {
+      const nextIds = new Set(snapshot.heap.map(o => o.id));
+
+      for (const child of Array.from(heapEl.children)) {
+        const id = child.dataset.heapId;
+        if (!nextIds.has(id)) child.remove();
+      }
+
+      let anchor = null;
+      for (const obj of snapshot.heap) {
+        const existing = heapEl.querySelector('[data-heap-id="' + cssEscape(obj.id) + '"]');
+        const sig = heapSignature(obj);
+
+        if (existing && existing.dataset.sig === sig) {
+          anchor = existing;
+          continue;
+        }
+
+        const el = buildHeapEl(obj, sig);
+        if (existing) {
+          const wasHighlighted = existing.classList.contains('highlight');
+          if (wasHighlighted) el.classList.add('highlight');
+          existing.replaceWith(el);
+        } else if (anchor) {
+          anchor.after(el);
+        } else {
+          heapEl.prepend(el);
+        }
+        anchor = el;
+      }
+    }
+
+    function buildHeapEl(obj, sig) {
+      const el = document.createElement('div');
+      el.className = 'heap';
+      el.dataset.heapId = obj.id;
+      el.dataset.sig = sig;
+      el.id = 'heap-' + obj.id;
+
+      const header = document.createElement('div');
+      header.className = 'heap-header';
+      header.innerHTML =
+        '<div class="type-tag">' +
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>' +
+        '<span>' + escapeHtml(obj.type) + '</span>' +
+        '</div>' +
+        '<span class="id-pill">#' + obj.id + '</span>';
+      el.appendChild(header);
+
+      for (const item of obj.preview) {
+        const row = document.createElement('div');
+        row.className = 'heap-item';
+        row.textContent = item;
+        el.appendChild(row);
+      }
+      if (obj.truncated) {
+        const more = document.createElement('div');
+        more.className = 'heap-more';
+        more.textContent = '+ ' + (obj.size - obj.preview.length) + ' more';
+        el.appendChild(more);
+      }
+      return el;
+    }
+
+    function cssEscape(s) {
+      return String(s).replace(/["\\]/g, '\\$&');
+    }
+
+    function highlightHeap(refId) {
+      document.querySelectorAll('.heap.highlight').forEach(e => e.classList.remove('highlight'));
+      document.querySelectorAll('#edge-overlay path.edge-highlight').forEach(e => e.classList.remove('edge-highlight'));
+      const target = document.getElementById('heap-' + refId);
+      if (target) {
+        target.classList.add('highlight');
+        target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      document.querySelectorAll('#edge-overlay path[data-heap-id="' + refId + '"]').forEach(p => {
+        p.classList.add('edge-highlight');
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+  </script>
+</body>
+
+</html>

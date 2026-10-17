@@ -1,0 +1,85 @@
+{
+  "name": "codilizer-python",
+  "displayName": "Codilizer Python",
+  "description": "Interactive diagram of code execution, memory, and complexity, linked live to your debugger.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Debuggers",
+    "Visualization",
+    "Other"
+  ],
+  "activationEvents": [
+    "onDebug",
+    "onCommand:codilizer.open"
+  ],
+  "icon": "media/logo.png",
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codilizer.open",
+        "title": "Codilizer Python: Open Diagram Panel",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "codilizer.analyzeComplexity",
+        "title": "Codilizer Python: Analyze Complexity of Function Under Cursor",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "codilizer.selectPythonInterpreter",
+        "title": "Codilizer Python: Select Python Interpreter",
+        "icon": "$(gear)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "codilizer.open",
+          "group": "navigation@1",
+          "when": "editorLangId == python || resourceExtname == .py"
+        },
+        {
+          "command": "codilizer.analyzeComplexity",
+          "group": "navigation@2",
+          "when": "editorLangId == python || resourceExtname == .py"
+        },
+        {
+          "command": "codilizer.selectPythonInterpreter",
+          "group": "navigation@3",
+          "when": "editorLangId == python || resourceExtname == .py"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Codilizer Python",
+      "properties": {
+        "codilizer.pythonPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the Python interpreter used for complexity profiling. Leave empty to auto-detect (checks the Python extension's active interpreter, workspace virtualenvs, VIRTUAL_ENV/CONDA_PREFIX, then PATH). Set via 'Codilizer Python: Select Python Interpreter' or edit directly."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile",
+    "test:webview": "node test/webview.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "jsdom": "^24.0.0",
+    "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "@vscode/debugprotocol": "^1.65.0",
+    "katex": "0.18.0",
+    "mermaid": "^11.12.2"
+  }
+}
