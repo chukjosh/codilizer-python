@@ -79,7 +79,9 @@
   },
   "dependencies": {
     "@vscode/debugprotocol": "^1.65.0",
+    "dotenv": "^8.2.0",
     "katex": "0.18.0",
-    "mermaid": "^11.12.2"
+    "mermaid": "^11.12.2",
+    "node-fetch": "^3.3.2"
   }
 }
